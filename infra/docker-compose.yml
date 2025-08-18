@@ -1,0 +1,27 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: jobtrackr
+    ports: ["5433:5432"]
+    volumes: [db_data:/var/lib/postgresql/data]
+
+  n8n:
+    image: n8nio/n8n:latest
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin
+      - N8N_ENCRYPTION_KEY=please-change-me-to-a-long-random-string
+      - GENERIC_TIMEZONE=America/New_York
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  db_data:
+  n8n_data:

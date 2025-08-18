@@ -1,0 +1,79 @@
+// ---------- Data source & generator ----------
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ---------- Domain ----------
+enum AppStatus {
+  APPLIED
+  INTERVIEWING
+  REJECTED
+  OFFER
+  OTHER
+}
+
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique
+  name         String?
+  createdAt    DateTime      @default(now())
+  applications Application[]
+  emails       Email[]
+}
+
+model Application {
+  id             String        @id @default(cuid())
+  userId         String
+  company        String
+  roleTitle      String
+  status         AppStatus     @default(APPLIED)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  lastActivityAt DateTime?
+  emails         Email[]
+  statusEvents   StatusEvent[]
+  User           User          @relation(fields: [userId], references: [id])
+
+  @@index([userId, updatedAt])
+  @@index([userId, company])
+}
+
+model Email {
+  id                String   @id @default(cuid())
+  userId            String
+  applicationId     String?
+  providerMessageId String?  @unique
+  messageId         String?  @unique
+  inReplyTo         String?
+  fromName          String?
+  fromEmail         String?
+  toEmails          String?
+  ccEmails          String?
+  sentAt            DateTime
+  subject           String
+  snippet           String?
+  bodyText          String?
+  bodyHtml          String?
+  headersJson       Json?
+
+  User        User         @relation(fields: [userId], references: [id])
+  Application Application? @relation(fields: [applicationId], references: [id])
+
+  @@index([userId, sentAt])
+}
+
+model StatusEvent {
+  id            String     @id @default(cuid())
+  applicationId String
+  fromStatus    AppStatus?
+  toStatus      AppStatus
+  reason        String?
+  createdAt     DateTime   @default(now())
+
+  Application Application @relation(fields: [applicationId], references: [id])
+}

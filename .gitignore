@@ -1,0 +1,28 @@
+@'
+# Node / monorepo
+node_modules/
+**/node_modules/
+dist/
+build/
+coverage/
+.nyc_output
+*.log
+*.tsbuildinfo
+
+# Env & local config
+.env
+**/.env
+.env.local
+**/.env.local
+.vscode/
+.DS_Store
+
+# Vite
+apps/web/dist/
+
+# Prisma (generated engines live under node_modules anyway)
+.prisma/
+
+# Docker junk
+infra/*.log
+'@ | Out-File -Encoding utf8 .gitignore
