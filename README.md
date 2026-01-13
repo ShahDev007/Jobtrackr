@@ -1,4 +1,3 @@
-@'
 # JobTrackr (MVP)
 
 Track job applications automatically from email → dashboard.
